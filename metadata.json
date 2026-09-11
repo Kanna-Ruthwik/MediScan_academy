@@ -1,0 +1,8 @@
+{
+  "name": "MediScan Academy",
+  "description": "Native Android Digital Signal and Medical Image Processing workstation implementing Gonzalez & Woods algorithms in pure Java.",
+  "requestFramePermissions": [
+    "android.permission.CAMERA"
+  ],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

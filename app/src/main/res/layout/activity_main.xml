@@ -1,0 +1,694 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_coordinator"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_dark">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <!-- Action Toolbar -->
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/card_dark"
+            android:elevation="4dp"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tv_app_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="MediScan Academy"
+                        android:textColor="@color/teal_medical"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tv_app_subtitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Gonzalez &amp; Woods DIP DSP Engine"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="11sp" />
+                </LinearLayout>
+
+                <!-- Input Mode Toggle: Camera vs Gallery -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_mode_toggle"
+                    style="@style/Widget.Material3.Button.TonalButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="38dp"
+                    android:layout_marginEnd="6dp"
+                    android:backgroundTint="@color/surface_dark"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:text="Live Cam"
+                    android:textColor="@color/teal_medical"
+                    android:textSize="12sp"
+                    app:icon="@drawable/ic_camera"
+                    app:iconSize="16dp"
+                    app:iconTint="@color/teal_medical" />
+
+                <!-- Sample Scans Menu Button -->
+                <ImageButton
+                    android:id="@+id/btn_sample_scans"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Select Sample Medical Scan"
+                    android:src="@drawable/ic_sample_scans"
+                    app:tint="@color/teal_medical" />
+
+                <!-- Open Device Gallery Button -->
+                <ImageButton
+                    android:id="@+id/btn_open_gallery"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Open Scan from Gallery"
+                    android:src="@drawable/ic_gallery"
+                    app:tint="@color/text_primary" />
+
+                <!-- Theory / Formula Bottom Sheet Button -->
+                <ImageButton
+                    android:id="@+id/btn_theory_info"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="View Gonzalez Mathematical Formulas"
+                    android:src="@drawable/ic_theory"
+                    app:tint="@color/teal_medical" />
+            </LinearLayout>
+        </com.google.android.material.appbar.MaterialToolbar>
+
+        <!-- Main Scrollable Content -->
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="12dp">
+
+                <!-- Dual Viewport Frame -->
+                <FrameLayout
+                    android:id="@+id/viewport_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="280dp"
+                    android:background="@drawable/bg_card_rounded"
+                    android:clipChildren="true"
+                    android:clipToPadding="true">
+
+                    <!-- CameraX PreviewView -->
+                    <androidx.camera.view.PreviewView
+                        android:id="@+id/camera_preview_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:visibility="gone" />
+
+                    <!-- Processed Bitmap ImageView (Used for processed camera frames and static scans) -->
+                    <ImageView
+                        android:id="@+id/image_viewport"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:contentDescription="Processed Medical Scan Viewport"
+                        android:scaleType="fitCenter" />
+
+                    <!-- Top Bar: Mode Badge & Sample Name -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="top"
+                        android:background="#99121212"
+                        android:orientation="horizontal"
+                        android:padding="6dp">
+
+                        <TextView
+                            android:id="@+id/tv_mode_badge"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_stats_badge"
+                            android:paddingStart="8dp"
+                            android:paddingTop="3dp"
+                            android:paddingEnd="8dp"
+                            android:paddingBottom="3dp"
+                            android:text="STATIC SCAN: CHEST X-RAY"
+                            android:textColor="@color/teal_medical"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="1dp"
+                            android:layout_weight="1" />
+
+                        <TextView
+                            android:id="@+id/tv_algorithm_active_badge"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_stats_badge"
+                            android:paddingStart="8dp"
+                            android:paddingTop="3dp"
+                            android:paddingEnd="8dp"
+                            android:paddingBottom="3dp"
+                            android:text="HISTOGRAM EQUALIZATION"
+                            android:textColor="@color/accent_blue"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <!-- Bottom Bar: DSP Latency & Resolution HUD -->
+                    <TextView
+                        android:id="@+id/tv_fps_hud"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom|start"
+                        android:layout_margin="8dp"
+                        android:background="@drawable/bg_stats_badge"
+                        android:paddingStart="8dp"
+                        android:paddingTop="4dp"
+                        android:paddingEnd="8dp"
+                        android:paddingBottom="4dp"
+                        android:text="CPU DSP: 0.0 ms | 0 FPS | Buffer: int[]"
+                        android:textColor="#E0E0E0"
+                        android:textSize="10sp"
+                        android:typeface="monospace" />
+
+                    <!-- Loading / Processing Progress Bar -->
+                    <ProgressBar
+                        android:id="@+id/pb_processing"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_gravity="center"
+                        android:indeterminateTint="@color/teal_medical"
+                        android:visibility="gone" />
+                </FrameLayout>
+
+                <!-- Live 256-Bin Grayscale Histogram Section -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_histogram"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    app:cardBackgroundColor="@color/card_dark"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="2dp"
+                    app:strokeColor="#2C2C2C"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="10dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="256-BIN INTENSITY HISTOGRAM"
+                                android:textColor="@color/teal_medical"
+                                android:textSize="11sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tv_histogram_stats"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="μ=128 | Otsu k*=130"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="10sp"
+                                android:typeface="monospace" />
+                        </LinearLayout>
+
+                        <!-- Custom Histogram View -->
+                        <com.example.mediscan.ui.views.HistogramView
+                            android:id="@+id/histogram_view"
+                            android:layout_width="match_parent"
+                            android:layout_height="72dp"
+                            android:layout_marginTop="6dp" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Dynamic Parameters Control Section -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_parameters"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    app:cardBackgroundColor="@color/card_dark"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="2dp"
+                    app:strokeColor="#2C2C2C"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="10dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/tv_param_label"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Parameter: Default"
+                                android:textColor="@color/text_primary"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tv_param_value"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="1.00"
+                                android:textColor="@color/teal_medical"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                android:typeface="monospace" />
+                        </LinearLayout>
+
+                        <!-- Parameter SeekBar -->
+                        <SeekBar
+                            android:id="@+id/seekbar_param"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:max="100"
+                            android:progress="50"
+                            android:progressBackgroundTint="#444444"
+                            android:progressTint="@color/teal_medical"
+                            android:thumbTint="@color/teal_medical" />
+
+                        <!-- Morphology Structuring Element Selector (Visible only for morphology) -->
+                        <LinearLayout
+                            android:id="@+id/layout_structuring_element"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:visibility="gone">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="8dp"
+                                android:text="SE (3x3):"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="11sp" />
+
+                            <com.google.android.material.button.MaterialButtonToggleGroup
+                                android:id="@+id/toggle_se"
+                                android:layout_width="wrap_content"
+                                android:layout_height="36dp"
+                                app:singleSelection="true">
+
+                                <com.google.android.material.button.MaterialButton
+                                    android:id="@+id/btn_se_square"
+                                    style="@style/Widget.Material3.Button.OutlinedButton"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="36dp"
+                                    android:insetTop="0dp"
+                                    android:insetBottom="0dp"
+                                    android:text="Square"
+                                    android:textSize="11sp" />
+
+                                <com.google.android.material.button.MaterialButton
+                                    android:id="@+id/btn_se_cross"
+                                    style="@style/Widget.Material3.Button.OutlinedButton"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="36dp"
+                                    android:insetTop="0dp"
+                                    android:insetBottom="0dp"
+                                    android:text="Cross"
+                                    android:textSize="11sp" />
+
+                                <com.google.android.material.button.MaterialButton
+                                    android:id="@+id/btn_se_disk"
+                                    style="@style/Widget.Material3.Button.OutlinedButton"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="36dp"
+                                    android:insetTop="0dp"
+                                    android:insetBottom="0dp"
+                                    android:text="Disk"
+                                    android:textSize="11sp" />
+                            </com.google.android.material.button.MaterialButtonToggleGroup>
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/tv_param_hint"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="Adjust algorithm hyper-parameter in real time."
+                            android:textColor="@color/text_secondary"
+                            android:textSize="11sp" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Algorithm Modules Category & Horizontal Scroll -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:text="GONZALEZ &amp; WOODS ALGORITHMS"
+                    android:textColor="@color/teal_medical"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+
+                <!-- Chapter 3: Intensity Transformations -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="Ch 3. Intensity Transformations &amp; Histograms"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="11sp" />
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:overScrollMode="never"
+                    android:scrollbars="none">
+
+                    <LinearLayout
+                        android:id="@+id/group_module_intensity"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <Button
+                            android:id="@+id/btn_algo_original"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="6dp"
+                            android:text="Original (BT.601)"
+                            android:textSize="11sp" />
+
+                        <Button
+                            android:id="@+id/btn_algo_log"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="6dp"
+                            android:text="Log: s=c·log(1+r)"
+                            android:textSize="11sp" />
+
+                        <Button
+                            android:id="@+id/btn_algo_gamma"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="6dp"
+                            android:text="Power-Law (Gamma)"
+                            android:textSize="11sp" />
+
+                        <Button
+                            android:id="@+id/btn_algo_hist_eq"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="6dp"
+                            android:text="Histogram Equalization"
+                            android:textSize="11sp" />
+                    </LinearLayout>
+                </HorizontalScrollView>
+
+                <!-- Chapter 3: Spatial Filtering & Convolutions -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Ch 3. Spatial Filtering &amp; Convolution Engine"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="11sp" />
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:overScrollMode="never"
+                    android:scrollbars="none">
+
+                    <LinearLayout
+                        android:id="@+id/group_module_spatial"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <Button
+                            android:id="@+id/btn_algo_gaussian"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="6dp"
+                            android:text="Gaussian Blur (Spatial)"
+                            android:textSize="11sp" />
+
+                        <Button
+                            android:id="@+id/btn_algo_median"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="6dp"
+                            android:text="Median (Speckle Reduction)"
+                            android:textSize="11sp" />
+
+                        <Button
+                            android:id="@+id/btn_algo_sobel"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="6dp"
+                            android:text="Sobel Edge Gradients"
+                            android:textSize="11sp" />
+
+                        <Button
+                            android:id="@+id/btn_algo_laplacian"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="6dp"
+                            android:text="Laplacian Sharpening"
+                            android:textSize="11sp" />
+                    </LinearLayout>
+                </HorizontalScrollView>
+
+                <!-- Chapter 4: Frequency Domain Processing (2D FFT) -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Ch 4. Frequency Domain &amp; 2D FFT"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="11sp" />
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:overScrollMode="never"
+                    android:scrollbars="none">
+
+                    <LinearLayout
+                        android:id="@+id/group_module_frequency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <Button
+                            android:id="@+id/btn_algo_fft_spectrum"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="6dp"
+                            android:text="2D FFT Spectrum |F(u,v)|"
+                            android:textSize="11sp" />
+
+                        <Button
+                            android:id="@+id/btn_algo_ilpf"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="6dp"
+                            android:text="Ideal Lowpass (ILPF)"
+                            android:textSize="11sp" />
+
+                        <Button
+                            android:id="@+id/btn_algo_glpf"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="6dp"
+                            android:text="Gaussian Lowpass (GLPF)"
+                            android:textSize="11sp" />
+                    </LinearLayout>
+                </HorizontalScrollView>
+
+                <!-- Chapter 10: Automated Image Segmentation -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Ch 10. Automated Image Segmentation"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="11sp" />
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:overScrollMode="never"
+                    android:scrollbars="none">
+
+                    <LinearLayout
+                        android:id="@+id/group_module_segmentation"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <Button
+                            android:id="@+id/btn_algo_global_thresh"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="6dp"
+                            android:text="Global Threshold"
+                            android:textSize="11sp" />
+
+                        <Button
+                            android:id="@+id/btn_algo_otsu"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="6dp"
+                            android:text="Otsu's Binarization (σ_B²)"
+                            android:textSize="11sp" />
+
+                        <Button
+                            android:id="@+id/btn_algo_adaptive_thresh"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="6dp"
+                            android:text="Adaptive Thresholding"
+                            android:textSize="11sp" />
+                    </LinearLayout>
+                </HorizontalScrollView>
+
+                <!-- Chapter 9: Morphological Processing -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Ch 9. Morphological Image Processing"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="11sp" />
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="24dp"
+                    android:overScrollMode="never"
+                    android:scrollbars="none">
+
+                    <LinearLayout
+                        android:id="@+id/group_module_morphology"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <Button
+                            android:id="@+id/btn_algo_erosion"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="6dp"
+                            android:text="Erosion A ⊖ B"
+                            android:textSize="11sp" />
+
+                        <Button
+                            android:id="@+id/btn_algo_dilation"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="6dp"
+                            android:text="Dilation A ⊕ B"
+                            android:textSize="11sp" />
+
+                        <Button
+                            android:id="@+id/btn_algo_opening"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="6dp"
+                            android:text="Opening A ∘ B"
+                            android:textSize="11sp" />
+
+                        <Button
+                            android:id="@+id/btn_algo_closing"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="6dp"
+                            android:text="Closing A • B"
+                            android:textSize="11sp" />
+
+                        <Button
+                            android:id="@+id/btn_algo_boundary"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="6dp"
+                            android:text="Boundary β(A) = A - (A⊖B)"
+                            android:textSize="11sp" />
+                    </LinearLayout>
+                </HorizontalScrollView>
+
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+    </LinearLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

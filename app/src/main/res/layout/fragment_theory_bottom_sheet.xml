@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/card_dark"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Top Drag Handle -->
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="12dp"
+        android:background="#555555" />
+
+    <!-- Sheet Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Gonzalez &amp; Woods (4th Ed.)"
+                android:textColor="@color/teal_medical"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Digital Image Processing Mathematical Models &amp; Clinical Scenarios"
+                android:textColor="@color/text_secondary"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/btn_close_theory"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Close Theory Dialog"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            app:tint="@color/text_secondary" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="10dp"
+        android:background="@color/divider_color" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- MODULE 1 -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                app:cardBackgroundColor="@color/surface_dark"
+                app:cardCornerRadius="10dp"
+                app:strokeColor="#333333"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="CHAPTER 3: INTENSITY TRANSFORMATIONS &amp; HISTOGRAMS"
+                        android:textColor="@color/teal_medical"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:background="#121212"
+                        android:padding="8dp"
+                        android:text="• Log Transform:  s = c · log(1 + r)\n• Gamma Transform:  s = c · r^γ\n• Histogram Equalization:  s_k = (L - 1) · Σ_{j=0}^k (n_j / MN)"
+                        android:textColor="#E0E0E0"
+                        android:textSize="11sp"
+                        android:typeface="monospace" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:text="Clinical Application: Compresses broad dynamic range in raw radiological detectors; enhances micro-calcifications in mammography and subtle lung nodules in under-exposed chest radiographs."
+                        android:textColor="@color/text_secondary"
+                        android:textSize="11sp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- MODULE 2 -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                app:cardBackgroundColor="@color/surface_dark"
+                app:cardCornerRadius="10dp"
+                app:strokeColor="#333333"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="CHAPTER 3: SPATIAL FILTERING &amp; CONVOLUTION ENGINE"
+                        android:textColor="@color/teal_medical"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:background="#121212"
+                        android:padding="8dp"
+                        android:text="• 2D Spatial Convolution:\n  g(x,y) = Σ_{s=-a}^a Σ_{t=-b}^b w(s,t) · f(x+s, y+t)\n• Sobel Magnitude:  M(x,y) = √(G_x² + G_y²)\n• Median Filter:  g(x,y) = median { f(s,t) ∈ S_xy }\n• Laplacian Sharpening:  ∇²f = ∂²f/∂x² + ∂²f/∂y²"
+                        android:textColor="#E0E0E0"
+                        android:textSize="11sp"
+                        android:typeface="monospace" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:text="Clinical Application: Median filters eradicate speckle/acoustic clutter in ultrasound while strictly preserving cardiac and hepatic wall boundaries; Sobel operators isolate cortical bone margins and microfractures in high-resolution CT."
+                        android:textColor="@color/text_secondary"
+                        android:textSize="11sp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- MODULE 3 -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                app:cardBackgroundColor="@color/surface_dark"
+                app:cardCornerRadius="10dp"
+                app:strokeColor="#333333"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="CHAPTER 4: FREQUENCY DOMAIN &amp; 2D FFT"
+                        android:textColor="@color/teal_medical"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:background="#121212"
+                        android:padding="8dp"
+                        android:text="• 2D DFT:  F(u,v) = Σ_x Σ_y f(x,y) · e^(-j 2π (ux/M + vy/N))\n• FFT Shift Centering:  f(x,y) · (-1)^(x+y) ⇔ F(u - M/2, v - N/2)\n• Gaussian Lowpass (GLPF):  H(u,v) = exp(-D²(u,v) / (2·D₀²))\n• Ideal Lowpass (ILPF):  H(u,v) = 1 if D(u,v) ≤ D₀ else 0"
+                        android:textColor="#E0E0E0"
+                        android:textSize="11sp"
+                        android:typeface="monospace" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:text="Clinical Application: k-Space manipulation in Magnetic Resonance Imaging (MRI); suppresses periodic interference stripes caused by patient respiratory motion or electronic hardware line noise."
+                        android:textColor="@color/text_secondary"
+                        android:textSize="11sp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- MODULE 4 -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                app:cardBackgroundColor="@color/surface_dark"
+                app:cardCornerRadius="10dp"
+                app:strokeColor="#333333"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="CHAPTER 10: AUTOMATED IMAGE SEGMENTATION"
+                        android:textColor="@color/teal_medical"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:background="#121212"
+                        android:padding="8dp"
+                        android:text="• Otsu's Criterion (Maximize Between-Class Variance):\n  σ_B²(k) = [μ_T · P₁(k) - m(k)]² / (P₁(k) · [1 - P₁(k)])\n• Optimal Threshold:  k* = argmax_{k} { σ_B²(k) }\n• Global Thresholding:  g(x,y) = 255 if f(x,y) > T else 0"
+                        android:textColor="#E0E0E0"
+                        android:textSize="11sp"
+                        android:typeface="monospace" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:text="Clinical Application: Automated zero-touch segmentation of lung parenchyma in pneumothorax assessment, acute ischemic stroke infarcts on CT, and cortical bone mass isolation."
+                        android:textColor="@color/text_secondary"
+                        android:textSize="11sp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- MODULE 5 -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="@color/surface_dark"
+                app:cardCornerRadius="10dp"
+                app:strokeColor="#333333"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="CHAPTER 9: MORPHOLOGICAL IMAGE PROCESSING"
+                        android:textColor="@color/teal_medical"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:background="#121212"
+                        android:padding="8dp"
+                        android:text="• Erosion:  A ⊖ B = { z | (B)_z ⊆ A }\n• Dilation:  A ⊕ B = { z | (B̂)_z ∩ A ≠ ∅ }\n• Opening:  A ∘ B = (A ⊖ B) ⊕ B\n• Closing:  A • B = (A ⊕ B) ⊖ B\n• Boundary Extraction:  β(A) = A - (A ⊖ B)"
+                        android:textColor="#E0E0E0"
+                        android:textSize="11sp"
+                        android:typeface="monospace" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:text="Clinical Application: Eliminates spurious parasitic noise bridges between adjacent blood vessels in angiography; extracts sharp myocardial contour loops for ventricular volume calculation."
+                        android:textColor="@color/text_secondary"
+                        android:textSize="11sp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</LinearLayout>

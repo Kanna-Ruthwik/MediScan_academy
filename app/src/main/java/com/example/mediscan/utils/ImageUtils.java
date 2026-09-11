@@ -225,7 +225,18 @@ public final class ImageUtils {
         int N = grayscale.length;
 
         for (int val : grayscale) {
-            int clamped = Math.max(0, Math.min(255, val));
+            int clamped;
+            if ((val & 0xFF000000) != 0) {
+                // 32-bit ARGB pixel: compute BT.601 luminance
+                int r = (val >> 16) & 0xFF;
+                int g = (val >> 8) & 0xFF;
+                int b = val & 0xFF;
+                int lum = (int) (0.299f * r + 0.587f * g + 0.114f * b + 0.5f);
+                clamped = Math.max(0, Math.min(255, lum));
+            } else {
+                // Standard 8-bit scalar intensity
+                clamped = Math.max(0, Math.min(255, val));
+            }
             outHistogram[clamped]++;
             if (clamped < min) min = clamped;
             if (clamped > max) max = clamped;
@@ -298,10 +309,17 @@ public final class ImageUtils {
     }
 
     /**
-     * Synthesizes clinically accurate high-resolution simulated medical scans
-     * (Chest X-Ray, Brain MRI, Bone CT Scan, Ultrasound with speckle noise).
-     *
-     * @param type 0: Chest X-Ray, 1: Brain MRI, 2: CT Bone Scan, 3: Ultrasound
+     * Synthesizes clinically accurate high-resolution simulated imaging modalities
+     * corresponding directly to Gonzalez & Woods (4th Ed.) Chapter 1.3:
+     * - 0: 1.3.1 Gamma-Ray Imaging (PET / Nuclear Medicine Radioisotope Scintigraphy)
+     * - 1: 1.3.2 X-Ray Imaging (Chest Radiograph / Fluoroscopy)
+     * - 2: 1.3.3 Ultraviolet Band (Fluorescence Microscopy / DNA Cell Markers)
+     * - 3: 1.3.4 Visible Band (Histopathology Tissue Biopsy)
+     * - 4: 1.3.4 Infrared Band (Thermography / Thermal Imaging)
+     * - 5: 1.3.5 Microwave Band (Radar Modality / Microwave Imaging)
+     * - 6: 1.3.6 Radio Band (Brain MRI T1-weighted Axial Slice)
+     * - 7: 1.3.7 Other Modality: Acoustic (Ultrasound with Rayleigh speckle)
+     * - 8: 1.3.7 Other Modality: Electron Microscopy (SEM Nanoscale Micrograph)
      */
     public static Bitmap generateSyntheticMedicalScan(int type, int width, int height) {
         int[] pixels = new int[width * height];
@@ -309,7 +327,39 @@ public final class ImageUtils {
         float cy = height / 2.0f;
 
         switch (type) {
-            case 0: // Chest X-Ray (Thoracic cavity, ribs, heart shadow, lungs)
+            case 0: { // 1.3.1 Gamma-Ray Imaging (PET Scan: Positron Emission / Radioisotope Uptake)
+                java.util.Random rnd = new java.util.Random(42);
+                for (int y = 0; y < height; y++) {
+                    for (int x = 0; x < width; x++) {
+                        float nx = (x - cx) / cx;
+                        float ny = (y - cy) / cy;
+                        double r = Math.hypot(nx, ny * 1.2);
+
+                        int intensity = 10;
+                        if (r < 0.85) {
+                            // Torso silhouette background tracer uptake
+                            intensity = 40 + (int) (20.0 * Math.sin(r * 4.0));
+
+                            // Hot spots: high metabolic tracer uptake (e.g. myocardium, hypermetabolic lesions)
+                            double lesion1 = Math.hypot(nx + 0.2, ny + 0.1);
+                            double lesion2 = Math.hypot(nx - 0.25, ny - 0.2);
+                            double heart = Math.hypot(nx - 0.05, ny + 0.15);
+
+                            if (lesion1 < 0.12) intensity += (int) ((1.0 - lesion1 / 0.12) * 190);
+                            if (lesion2 < 0.16) intensity += (int) ((1.0 - lesion2 / 0.16) * 170);
+                            if (heart < 0.22) intensity += (int) ((1.0 - heart / 0.22) * 150);
+
+                            // Poisson emission noise characteristic of gamma photon counting
+                            intensity += (rnd.nextGaussian() * 15.0);
+                        }
+                        intensity = Math.max(0, Math.min(255, intensity));
+                        pixels[y * width + x] = 0xFF000000 | (intensity << 16) | (intensity << 8) | intensity;
+                    }
+                }
+                break;
+            }
+
+            case 1: { // 1.3.2 X-Ray Imaging (Chest Radiograph / Thoracic Cavity)
                 for (int y = 0; y < height; y++) {
                     for (int x = 0; x < width; x++) {
                         float nx = (x - cx) / cx;
@@ -337,8 +387,128 @@ public final class ImageUtils {
                     }
                 }
                 break;
+            }
 
-            case 1: // Brain MRI (Cranium, cerebral cortex, ventricles)
+            case 2: { // 1.3.3 Ultraviolet Band (Fluorescence Microscopy / Fluorescent Cell Nuclei)
+                java.util.Random rnd = new java.util.Random(99);
+                for (int y = 0; y < height; y++) {
+                    for (int x = 0; x < width; x++) {
+                        float nx = (x - cx) / cx;
+                        float ny = (y - cy) / cy;
+
+                        // Dark background characteristic of UV epifluorescence
+                        int intensity = 15;
+
+                        // Cellular clusters fluorescing brightly
+                        double[] cellX = {-0.5, -0.2, 0.3, 0.6, -0.3, 0.1, 0.4, -0.6};
+                        double[] cellY = {-0.4, 0.3, -0.5, 0.2, -0.1, 0.0, 0.6, 0.5};
+                        for (int k = 0; k < cellX.length; k++) {
+                            double d = Math.hypot(nx - cellX[k], ny - cellY[k]);
+                            if (d < 0.18) {
+                                double peak = (1.0 - d / 0.18);
+                                intensity += (int) (peak * peak * 220);
+                            }
+                        }
+                        intensity += (int) (rnd.nextGaussian() * 6.0);
+                        intensity = Math.max(0, Math.min(255, intensity));
+                        pixels[y * width + x] = 0xFF000000 | (intensity << 16) | (intensity << 8) | intensity;
+                    }
+                }
+                break;
+            }
+
+            case 3: { // 1.3.4 Visible Band (Histopathology Light Microscopy / H&E Tissue Biopsy)
+                for (int y = 0; y < height; y++) {
+                    for (int x = 0; x < width; x++) {
+                        float nx = (x - cx) / cx;
+                        float ny = (y - cy) / cy;
+
+                        // Extracellular collagenous stroma background (Eosin pink: R high, G medium, B medium-high)
+                        double stromaVar = Math.sin(nx * 12.0) * 15.0 + Math.cos(ny * 12.0) * 15.0;
+                        int pr = (int) (225 + stromaVar);
+                        int pg = (int) (140 + stromaVar * 0.6);
+                        int pb = (int) (185 + stromaVar * 0.8);
+
+                        // Glandular lumens and epithelial nuclei
+                        double lumen1 = Math.hypot(nx - 0.3, ny - 0.3);
+                        double lumen2 = Math.hypot(nx + 0.35, ny + 0.25);
+
+                        if (lumen1 < 0.25) {
+                            if (lumen1 < 0.12) {
+                                // Clear lumen center (white/cream)
+                                pr = 248; pg = 245; pb = 242;
+                            } else {
+                                // Epithelial nuclei ring (Hematoxylin dark purple/blue)
+                                pr = 85; pg = 35; pb = 145;
+                            }
+                        } else if (lumen2 < 0.28) {
+                            if (lumen2 < 0.15) {
+                                pr = 248; pg = 245; pb = 242;
+                            } else {
+                                pr = 90; pg = 40; pb = 150;
+                            }
+                        }
+
+                        pr = Math.max(0, Math.min(255, pr));
+                        pg = Math.max(0, Math.min(255, pg));
+                        pb = Math.max(0, Math.min(255, pb));
+                        pixels[y * width + x] = 0xFF000000 | (pr << 16) | (pg << 8) | pb;
+                    }
+                }
+                break;
+            }
+
+            case 4: { // 1.3.4 Infrared Band (Medical Thermography / Temperature Map)
+                for (int y = 0; y < height; y++) {
+                    for (int x = 0; x < width; x++) {
+                        float nx = (x - cx) / cx;
+                        float ny = (y - cy) / cy;
+
+                        // Body silhouette heat envelope
+                        double dist = Math.hypot(nx, ny * 1.3);
+                        int intensity = 20;
+                        if (dist < 0.82) {
+                            // Core warmth
+                            double thermalGradient = (1.0 - dist / 0.82) * 180.0 + 40.0;
+                            // Asymmetric inflammatory hot spot (e.g. vascular insufficiency or tumor thermogenesis)
+                            double hotSpot = Math.hypot(nx - 0.22, ny + 0.1);
+                            if (hotSpot < 0.20) {
+                                thermalGradient += (1.0 - hotSpot / 0.20) * 70.0;
+                            }
+                            intensity = (int) thermalGradient;
+                        }
+                        intensity = Math.max(0, Math.min(255, intensity));
+                        pixels[y * width + x] = 0xFF000000 | (intensity << 16) | (intensity << 8) | intensity;
+                    }
+                }
+                break;
+            }
+
+            case 5: { // 1.3.5 Microwave Band (Radar / Microwave Imaging)
+                java.util.Random rnd = new java.util.Random(777);
+                for (int y = 0; y < height; y++) {
+                    for (int x = 0; x < width; x++) {
+                        float nx = (x - cx) / cx;
+                        float ny = (y - cy) / cy;
+
+                        // Ground terrain / backscatter surface
+                        double terrain = 80 + Math.sin(nx * 8.0 + ny * 6.0) * 30.0;
+
+                        // Radar reflective target / boundary edge
+                        if (Math.abs(nx - ny * 0.5) < 0.05 || Math.hypot(nx + 0.3, ny - 0.2) < 0.12) {
+                            terrain = 230;
+                        }
+
+                        // Microwave speckle backscatter
+                        terrain += rnd.nextGaussian() * 25.0;
+                        int intensity = (int) Math.max(0, Math.min(255, terrain));
+                        pixels[y * width + x] = 0xFF000000 | (intensity << 16) | (intensity << 8) | intensity;
+                    }
+                }
+                break;
+            }
+
+            case 6: { // 1.3.6 Radio Band (Brain MRI T1-weighted Axial Slice)
                 for (int y = 0; y < height; y++) {
                     for (int x = 0; x < width; x++) {
                         float nx = (x - cx) / cx;
@@ -369,34 +539,9 @@ public final class ImageUtils {
                     }
                 }
                 break;
+            }
 
-            case 2: // CT Scan (Pelvic / Femoral bone cross-section)
-                for (int y = 0; y < height; y++) {
-                    for (int x = 0; x < width; x++) {
-                        float nx = (x - cx) / cx;
-                        float ny = (y - cy) / cy;
-                        double dist = Math.hypot(nx, ny);
-
-                        int intensity;
-                        if (dist > 0.85) {
-                            intensity = 20; // Background
-                        } else if (dist > 0.65) {
-                            intensity = 80; // Soft tissue
-                        } else if (dist > 0.48) {
-                            intensity = 240; // High-density cortical bone
-                        } else if (dist > 0.20) {
-                            intensity = 120; // Trabecular / cancellous bone
-                        } else {
-                            intensity = 60; // Bone marrow cavity
-                        }
-                        intensity = Math.max(0, Math.min(255, intensity));
-                        pixels[y * width + x] = 0xFF000000 | (intensity << 16) | (intensity << 8) | intensity;
-                    }
-                }
-                break;
-
-            case 3: // Ultrasound (Sector pie beam with Rayleigh speckle noise)
-            default:
+            case 7: { // 1.3.7 Other: Acoustic / Ultrasound (Sector Scan with Rayleigh Speckle)
                 java.util.Random rnd = new java.util.Random(1337);
                 for (int y = 0; y < height; y++) {
                     for (int x = 0; x < width; x++) {
@@ -429,6 +574,33 @@ public final class ImageUtils {
                     }
                 }
                 break;
+            }
+
+            case 8: // 1.3.7 Other: Electron Microscopy (SEM Nanoscale Organelles)
+            default: {
+                java.util.Random rnd = new java.util.Random(555);
+                for (int y = 0; y < height; y++) {
+                    for (int x = 0; x < width; x++) {
+                        float nx = (x - cx) / cx;
+                        float ny = (y - cy) / cy;
+
+                        // Cytoplasm background
+                        int intensity = 130 + (int) (Math.sin(nx * 15.0) * 15.0);
+
+                        // Mitochondria / cristae membranes
+                        double mito = Math.hypot(nx * 1.5, ny);
+                        if (mito < 0.45) {
+                            double cristae = Math.sin(nx * 40.0) * 0.5 + 0.5;
+                            intensity = (cristae > 0.6) ? 220 : 50;
+                        }
+
+                        intensity += (int) (rnd.nextGaussian() * 10.0);
+                        intensity = Math.max(0, Math.min(255, intensity));
+                        pixels[y * width + x] = 0xFF000000 | (intensity << 16) | (intensity << 8) | intensity;
+                    }
+                }
+                break;
+            }
         }
 
         return Bitmap.createBitmap(pixels, width, height, Bitmap.Config.ARGB_8888);

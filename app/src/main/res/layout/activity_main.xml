@@ -395,6 +395,111 @@
                     android:textSize="11sp"
                     android:textStyle="bold" />
 
+                <!-- Chapter 2: Digital Image Fundamentals -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="Ch 2. Digital Image Fundamentals"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="11sp" />
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:overScrollMode="never"
+                    android:scrollbars="none">
+
+                    <LinearLayout
+                        android:id="@+id/group_module_fundamentals"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <Button
+                            android:id="@+id/btn_algo_quantize"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="6dp"
+                            android:text="Bit-Depth Quantize (False Contouring)"
+                            android:textSize="11sp" />
+
+                        <Button
+                            android:id="@+id/btn_algo_subsampling"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="6dp"
+                            android:text="Spatial Subsampling (Pixelation)"
+                            android:textSize="11sp" />
+
+                        <Button
+                            android:id="@+id/btn_algo_bitplane"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="6dp"
+                            android:text="Bit-Plane Slicing (Bits 0-7)"
+                            android:textSize="11sp" />
+
+                        <Button
+                            android:id="@+id/btn_algo_mach_bands"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="6dp"
+                            android:text="Mach Bands Perception"
+                            android:textSize="11sp" />
+
+                        <Button
+                            android:id="@+id/btn_algo_contrast"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="6dp"
+                            android:text="Simultaneous Contrast"
+                            android:textSize="11sp" />
+
+                        <Button
+                            android:id="@+id/btn_algo_dist_euclidean"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="6dp"
+                            android:text="Distance De (Euclidean)"
+                            android:textSize="11sp" />
+
+                        <Button
+                            android:id="@+id/btn_algo_dist_d4"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="6dp"
+                            android:text="Distance D4 (City-Block)"
+                            android:textSize="11sp" />
+
+                        <Button
+                            android:id="@+id/btn_algo_dist_d8"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="6dp"
+                            android:text="Distance D8 (Chessboard)"
+                            android:textSize="11sp" />
+
+                        <Button
+                            android:id="@+id/btn_algo_dsa"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="6dp"
+                            android:text="DSA Mask Subtraction"
+                            android:textSize="11sp" />
+                    </LinearLayout>
+                </HorizontalScrollView>
+
                 <!-- Chapter 3: Intensity Transformations -->
                 <TextView
                     android:layout_width="wrap_content"
@@ -562,6 +667,189 @@
                             android:layout_height="36dp"
                             android:layout_marginEnd="6dp"
                             android:text="Gaussian Lowpass (GLPF)"
+                            android:textSize="11sp" />
+                    </LinearLayout>
+                </HorizontalScrollView>
+
+                <!-- Chapter 5: Image Restoration and Noise Degradation -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Ch 5. Image Restoration &amp; Noise Models"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="11sp" />
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:overScrollMode="never"
+                    android:scrollbars="none">
+
+                    <LinearLayout
+                        android:id="@+id/group_module_restoration"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <Button
+                            android:id="@+id/btn_algo_noise_sp"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="6dp"
+                            android:text="Add Salt &amp; Pepper Noise"
+                            android:textSize="11sp" />
+
+                        <Button
+                            android:id="@+id/btn_algo_noise_gaussian"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="6dp"
+                            android:text="Add Gaussian Sensor Noise"
+                            android:textSize="11sp" />
+
+                        <Button
+                            android:id="@+id/btn_algo_restore_arithmetic"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="6dp"
+                            android:text="Arithmetic Mean Filter"
+                            android:textSize="11sp" />
+
+                        <Button
+                            android:id="@+id/btn_algo_restore_geometric"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="6dp"
+                            android:text="Geometric Mean Filter"
+                            android:textSize="11sp" />
+
+                        <Button
+                            android:id="@+id/btn_algo_restore_harmonic"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="6dp"
+                            android:text="Harmonic Mean Filter"
+                            android:textSize="11sp" />
+
+                        <Button
+                            android:id="@+id/btn_algo_restore_contraharmonic"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="6dp"
+                            android:text="Contraharmonic Filter (Q)"
+                            android:textSize="11sp" />
+
+                        <Button
+                            android:id="@+id/btn_algo_restore_alpha_trimmed"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="6dp"
+                            android:text="Alpha-Trimmed Mean"
+                            android:textSize="11sp" />
+
+                        <Button
+                            android:id="@+id/btn_algo_restore_wiener"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="6dp"
+                            android:text="Adaptive Wiener Filter"
+                            android:textSize="11sp" />
+                    </LinearLayout>
+                </HorizontalScrollView>
+
+                <!-- Chapter 6: Color Image Processing & Pseudocoloring -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Ch 6. Color Processing &amp; Pseudocolor"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="11sp" />
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:overScrollMode="never"
+                    android:scrollbars="none">
+
+                    <LinearLayout
+                        android:id="@+id/group_module_color"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <Button
+                            android:id="@+id/btn_algo_pseudocolor_rainbow"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="6dp"
+                            android:text="Rainbow / Jet Colormap"
+                            android:textSize="11sp" />
+
+                        <Button
+                            android:id="@+id/btn_algo_pseudocolor_thermal"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="6dp"
+                            android:text="Medical Thermal Hot"
+                            android:textSize="11sp" />
+
+                        <Button
+                            android:id="@+id/btn_algo_pseudocolor_pet"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="6dp"
+                            android:text="PET Hot Metal Uptake"
+                            android:textSize="11sp" />
+
+                        <Button
+                            android:id="@+id/btn_algo_pseudocolor_slicing"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="6dp"
+                            android:text="Intensity Slicing (Isophotes)"
+                            android:textSize="11sp" />
+
+                        <Button
+                            android:id="@+id/btn_algo_hsi_hue"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="6dp"
+                            android:text="HSI: Hue (H)"
+                            android:textSize="11sp" />
+
+                        <Button
+                            android:id="@+id/btn_algo_hsi_saturation"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="6dp"
+                            android:text="HSI: Saturation (S)"
+                            android:textSize="11sp" />
+
+                        <Button
+                            android:id="@+id/btn_algo_hsi_intensity"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="6dp"
+                            android:text="HSI: Intensity (I)"
                             android:textSize="11sp" />
                     </LinearLayout>
                 </HorizontalScrollView>

@@ -22,6 +22,15 @@ public class MedicalImageEngine {
 
     public enum Algorithm {
         ORIGINAL,
+        BIT_DEPTH_QUANTIZATION,
+        SPATIAL_SUBSAMPLING,
+        BIT_PLANE_SLICING,
+        MACH_BANDS_ILLUSION,
+        SIMULTANEOUS_CONTRAST,
+        DISTANCE_TRANSFORM_EUCLIDEAN,
+        DISTANCE_TRANSFORM_D4,
+        DISTANCE_TRANSFORM_D8,
+        IMAGE_SUBTRACTION_DSA,
         LOG_TRANSFORM,
         GAMMA_CORRECTION,
         HISTOGRAM_EQUALIZATION,
@@ -32,9 +41,28 @@ public class MedicalImageEngine {
         FFT_SPECTRUM,
         FFT_IDEAL_LOWPASS,
         FFT_GAUSSIAN_LOWPASS,
+        // Chapter 5: Image Restoration & Noise Models
+        NOISE_SALT_AND_PEPPER,
+        NOISE_GAUSSIAN,
+        RESTORE_ARITHMETIC_MEAN,
+        RESTORE_GEOMETRIC_MEAN,
+        RESTORE_HARMONIC_MEAN,
+        RESTORE_CONTRAHARMONIC_MEAN,
+        RESTORE_ALPHA_TRIMMED_MEAN,
+        RESTORE_ADAPTIVE_WIENER,
+        // Chapter 6: Color Image Processing
+        PSEUDOCOLOR_RAINBOW_JET,
+        PSEUDOCOLOR_THERMAL_HOT,
+        PSEUDOCOLOR_PET_HOT_METAL,
+        PSEUDOCOLOR_INTENSITY_SLICING,
+        HSI_HUE_EXTRACTION,
+        HSI_SATURATION_EXTRACTION,
+        HSI_INTENSITY_EXTRACTION,
+        // Chapter 10: Segmentation
         GLOBAL_THRESHOLD,
         OTSU_BINARIZATION,
         ADAPTIVE_THRESHOLD,
+        // Chapter 9: Morphological Processing
         BINARY_EROSION,
         BINARY_DILATION,
         MORPH_OPENING,
@@ -43,6 +71,22 @@ public class MedicalImageEngine {
     }
 
     public static class Parameters {
+        public int bitDepth = 3; // 1 to 7 bits (false contouring)
+        public int spatialSubsampleFactor = 8; // 2 to 32 downsampling grid
+        public int bitPlane = 7; // 0 (LSB) to 7 (MSB)
+        public float dsaContrastBoost = 2.0f; // DSA contrast gain
+        public FundamentalsProcessor.DistanceMetric distanceMetric =
+                FundamentalsProcessor.DistanceMetric.EUCLIDEAN;
+
+        // Chapter 5 Parameters
+        public float saltProb = 0.05f;
+        public float pepperProb = 0.05f;
+        public float gaussianNoiseStdDev = 25.0f;
+        public int meanFilterRadius = 1; // 1: 3x3, 2: 5x5
+        public float contraharmonicQ = 1.5f;
+        public int alphaTrimD = 4;
+        public float wienerNoiseVariance = 400.0f;
+
         public float gamma = 1.6f;
         public float logFactor = 1.0f;
         public int gaussianKernelSize = 3;
@@ -91,6 +135,66 @@ public class MedicalImageEngine {
 
     public void setAlgorithm(@NonNull Algorithm algorithm) {
         this.currentAlgorithm = algorithm;
+        if (algorithm != Algorithm.NOISE_SALT_AND_PEPPER
+                && algorithm != Algorithm.NOISE_GAUSSIAN
+                && algorithm != Algorithm.RESTORE_ARITHMETIC_MEAN
+                && algorithm != Algorithm.RESTORE_GEOMETRIC_MEAN
+                && algorithm != Algorithm.RESTORE_HARMONIC_MEAN
+                && algorithm != Algorithm.RESTORE_CONTRAHARMONIC_MEAN
+                && algorithm != Algorithm.RESTORE_ALPHA_TRIMMED_MEAN
+                && algorithm != Algorithm.RESTORE_ADAPTIVE_WIENER) {
+            isDegradedUserSelected = false;
+        }
+    }
+
+    public static boolean isColorAlgorithm(Algorithm algo) {
+        if (algo == null) return false;
+        switch (algo) {
+            case PSEUDOCOLOR_RAINBOW_JET:
+            case PSEUDOCOLOR_THERMAL_HOT:
+            case PSEUDOCOLOR_PET_HOT_METAL:
+            case PSEUDOCOLOR_INTENSITY_SLICING:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    private int[] persistentDegraded = null;
+    private boolean isDegradedUserSelected = false;
+
+    private void cacheDegraded(int[] degradedOutput) {
+        if (persistentDegraded == null || persistentDegraded.length != degradedOutput.length) {
+            persistentDegraded = new int[degradedOutput.length];
+        }
+        System.arraycopy(degradedOutput, 0, persistentDegraded, 0, degradedOutput.length);
+        isDegradedUserSelected = true;
+    }
+
+    private int[] getDegradedOrInput(int[] input, int width, int height, int defaultNoiseType) {
+        if (isDegradedUserSelected && persistentDegraded != null && persistentDegraded.length == input.length) {
+            return persistentDegraded;
+        }
+        int[] synthetic = new int[input.length];
+        switch (defaultNoiseType) {
+            case 1: // Salt noise (Harmonic & negative Contraharmonic)
+                RestorationProcessor.applySaltAndPepperNoise(input, synthetic, 0.12f, 0.0f);
+                return synthetic;
+            case 2: // Pepper noise (positive Contraharmonic)
+                RestorationProcessor.applySaltAndPepperNoise(input, synthetic, 0.0f, 0.12f);
+                return synthetic;
+            case 3: // Mixed Gaussian + Salt & Pepper (Alpha-Trimmed)
+                RestorationProcessor.applyGaussianNoise(input, synthetic, 0.0f, 18.0f);
+                int[] mixed = new int[input.length];
+                RestorationProcessor.applySaltAndPepperNoise(synthetic, mixed, 0.06f, 0.06f);
+                return mixed;
+            case 4: // Gaussian additive noise (Adaptive Wiener MMSE)
+                float stdDev = (float) Math.sqrt(Math.max(4.0f, parameters.wienerNoiseVariance));
+                RestorationProcessor.applyGaussianNoise(input, synthetic, 0.0f, stdDev);
+                return synthetic;
+            default:
+                return input;
+        }
     }
 
     public Algorithm getAlgorithm() {
@@ -137,7 +241,7 @@ public class MedicalImageEngine {
                 extractRotatedY(yBuffer, width, height, rotationDegrees, dstWidth, dstHeight, cachedGrayscale);
 
                 // Run DSP pipeline
-                executePipeline(cachedGrayscale, cachedOutput, dstWidth, dstHeight);
+                executePipeline(cachedGrayscale, null, cachedOutput, dstWidth, dstHeight);
 
                 // Reconstruct ARGB bitmap
                 updateOutputBitmap(cachedOutput, dstWidth, dstHeight);
@@ -179,13 +283,22 @@ public class MedicalImageEngine {
             int height = sourceBitmap.getHeight();
             int totalPixels = width * height;
 
+            // Extract ARGB pixels if color source
+            int[] rgbPixels = new int[totalPixels];
+            sourceBitmap.getPixels(rgbPixels, 0, width, 0, 0, width, height);
+
             // Extract ITU-R BT.601 luminance
             int[] grayscale = ImageUtils.bitmapToGrayscaleIntArray(sourceBitmap);
             int[] output = new int[totalPixels];
 
-            executePipeline(grayscale, output, width, height);
+            executePipeline(grayscale, rgbPixels, output, width, height);
 
-            Bitmap outputBitmap = ImageUtils.grayscaleIntArrayToBitmap(output, width, height);
+            Bitmap outputBitmap;
+            if (isColorAlgorithm(currentAlgorithm)) {
+                outputBitmap = Bitmap.createBitmap(output, width, height, Bitmap.Config.ARGB_8888);
+            } else {
+                outputBitmap = ImageUtils.grayscaleIntArrayToBitmap(output, width, height);
+            }
 
             int[] histogram = new int[256];
             ImageUtils.HistogramStats stats = new ImageUtils.HistogramStats();
@@ -203,8 +316,56 @@ public class MedicalImageEngine {
         });
     }
 
-    private void executePipeline(int[] input, int[] output, int width, int height) {
+    private void executePipeline(int[] input, int[] rgbInput, int[] output, int width, int height) {
         switch (currentAlgorithm) {
+            case BIT_DEPTH_QUANTIZATION:
+                FundamentalsProcessor.applyBitDepthQuantization(input, output, parameters.bitDepth);
+                break;
+
+            case SPATIAL_SUBSAMPLING:
+                FundamentalsProcessor.applySpatialSubsampling(input, output, width, height, parameters.spatialSubsampleFactor);
+                break;
+
+            case BIT_PLANE_SLICING:
+                FundamentalsProcessor.applyBitPlaneSlicing(input, output, parameters.bitPlane);
+                break;
+
+            case MACH_BANDS_ILLUSION:
+                FundamentalsProcessor.generateMachBands(output, width, height);
+                break;
+
+            case SIMULTANEOUS_CONTRAST:
+                FundamentalsProcessor.generateSimultaneousContrast(output, width, height);
+                break;
+
+            case DISTANCE_TRANSFORM_EUCLIDEAN:
+                FundamentalsProcessor.computeDistanceTransform(
+                        input, output, width, height,
+                        FundamentalsProcessor.DistanceMetric.EUCLIDEAN,
+                        parameters.globalThreshold
+                );
+                break;
+
+            case DISTANCE_TRANSFORM_D4:
+                FundamentalsProcessor.computeDistanceTransform(
+                        input, output, width, height,
+                        FundamentalsProcessor.DistanceMetric.CITY_BLOCK_D4,
+                        parameters.globalThreshold
+                );
+                break;
+
+            case DISTANCE_TRANSFORM_D8:
+                FundamentalsProcessor.computeDistanceTransform(
+                        input, output, width, height,
+                        FundamentalsProcessor.DistanceMetric.CHESSBOARD_D8,
+                        parameters.globalThreshold
+                );
+                break;
+
+            case IMAGE_SUBTRACTION_DSA:
+                FundamentalsProcessor.applyDigitalSubtractionAngiography(input, output, width, height, parameters.dsaContrastBoost);
+                break;
+
             case LOG_TRANSFORM:
                 SpatialProcessor.applyLogTransform(input, output, parameters.logFactor);
                 break;
@@ -257,6 +418,87 @@ public class MedicalImageEngine {
                 scaleOrCenterToOutput(fftOut, fftSize, fftSize, output, width, height);
                 break;
             }
+
+            // Chapter 5: Image Restoration & Noise Degradation Models
+            case NOISE_SALT_AND_PEPPER:
+                RestorationProcessor.applySaltAndPepperNoise(input, output, parameters.saltProb, parameters.pepperProb);
+                cacheDegraded(output);
+                break;
+
+            case NOISE_GAUSSIAN:
+                RestorationProcessor.applyGaussianNoise(input, output, 0.0f, parameters.gaussianNoiseStdDev);
+                cacheDegraded(output);
+                break;
+
+            case RESTORE_ARITHMETIC_MEAN: {
+                int[] src = getDegradedOrInput(input, width, height, 0);
+                RestorationProcessor.applyArithmeticMeanFilter(src, output, width, height, parameters.meanFilterRadius);
+                break;
+            }
+
+            case RESTORE_GEOMETRIC_MEAN: {
+                int[] src = getDegradedOrInput(input, width, height, 0);
+                RestorationProcessor.applyGeometricMeanFilter(src, output, width, height, parameters.meanFilterRadius);
+                break;
+            }
+
+            case RESTORE_HARMONIC_MEAN: {
+                // Harmonic mean specifically eliminates salt noise
+                int[] src = getDegradedOrInput(input, width, height, 1);
+                RestorationProcessor.applyHarmonicMeanFilter(src, output, width, height, parameters.meanFilterRadius);
+                break;
+            }
+
+            case RESTORE_CONTRAHARMONIC_MEAN: {
+                // Contraharmonic: Q > 0 eliminates pepper; Q < 0 eliminates salt
+                int noiseType = (parameters.contraharmonicQ >= 0.0f) ? 2 : 1;
+                int[] src = getDegradedOrInput(input, width, height, noiseType);
+                RestorationProcessor.applyContraharmonicMeanFilter(src, output, width, height, parameters.meanFilterRadius, parameters.contraharmonicQ);
+                break;
+            }
+
+            case RESTORE_ALPHA_TRIMMED_MEAN: {
+                // Alpha-trimmed restores mixed Gaussian + impulse noise
+                int[] src = getDegradedOrInput(input, width, height, 3);
+                RestorationProcessor.applyAlphaTrimmedMeanFilter(src, output, width, height, parameters.meanFilterRadius, parameters.alphaTrimD);
+                break;
+            }
+
+            case RESTORE_ADAPTIVE_WIENER: {
+                // Local adaptive Wiener filter restores Gaussian noise
+                int[] src = getDegradedOrInput(input, width, height, 4);
+                RestorationProcessor.applyAdaptiveWienerFilter(src, output, width, height, parameters.meanFilterRadius, parameters.wienerNoiseVariance);
+                break;
+            }
+
+            // Chapter 6: Color Image Processing & Pseudocolor
+            case PSEUDOCOLOR_RAINBOW_JET:
+                ColorProcessingProcessor.applyPseudocolor(input, output, ColorProcessingProcessor.ColormapType.RAINBOW_JET);
+                break;
+
+            case PSEUDOCOLOR_THERMAL_HOT:
+                ColorProcessingProcessor.applyPseudocolor(input, output, ColorProcessingProcessor.ColormapType.MEDICAL_THERMAL_HOT);
+                break;
+
+            case PSEUDOCOLOR_PET_HOT_METAL:
+                ColorProcessingProcessor.applyPseudocolor(input, output, ColorProcessingProcessor.ColormapType.PET_HOT_METAL);
+                break;
+
+            case PSEUDOCOLOR_INTENSITY_SLICING:
+                ColorProcessingProcessor.applyPseudocolor(input, output, ColorProcessingProcessor.ColormapType.INTENSITY_SLICING_ISOPHOTES);
+                break;
+
+            case HSI_HUE_EXTRACTION:
+                ColorProcessingProcessor.extractHsiComponent(rgbInput != null ? rgbInput : input, output, 0);
+                break;
+
+            case HSI_SATURATION_EXTRACTION:
+                ColorProcessingProcessor.extractHsiComponent(rgbInput != null ? rgbInput : input, output, 1);
+                break;
+
+            case HSI_INTENSITY_EXTRACTION:
+                ColorProcessingProcessor.extractHsiComponent(rgbInput != null ? rgbInput : input, output, 2);
+                break;
 
             case GLOBAL_THRESHOLD:
                 SegmentationProcessor.applyGlobalThreshold(input, output, parameters.globalThreshold);
@@ -399,16 +641,20 @@ public class MedicalImageEngine {
         }
     }
 
-    private void updateOutputBitmap(int[] grayscale, int width, int height) {
+    private void updateOutputBitmap(int[] outputBuffer, int width, int height) {
         int total = width * height;
-        int[] argb = new int[total];
-        for (int i = 0; i < total; i++) {
-            int val = grayscale[i];
-            if (val < 0) val = 0;
-            else if (val > 255) val = 255;
-            argb[i] = 0xFF000000 | (val << 16) | (val << 8) | val;
+        if (isColorAlgorithm(currentAlgorithm)) {
+            cachedOutputBitmap.setPixels(outputBuffer, 0, width, 0, 0, width, height);
+        } else {
+            int[] argb = new int[total];
+            for (int i = 0; i < total; i++) {
+                int val = outputBuffer[i];
+                if (val < 0) val = 0;
+                else if (val > 255) val = 255;
+                argb[i] = 0xFF000000 | (val << 16) | (val << 8) | val;
+            }
+            cachedOutputBitmap.setPixels(argb, 0, width, 0, 0, width, height);
         }
-        cachedOutputBitmap.setPixels(argb, 0, width, 0, 0, width, height);
     }
 
     private void computeFps() {

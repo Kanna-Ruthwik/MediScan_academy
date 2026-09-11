@@ -70,6 +70,96 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <!-- CHAPTER 1: INTRODUCTION -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                app:cardBackgroundColor="@color/surface_dark"
+                app:cardCornerRadius="10dp"
+                app:strokeColor="#333333"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="CHAPTER 1: INTRODUCTION &amp; EM SPECTRUM MODALITIES"
+                        android:textColor="@color/teal_medical"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:background="#121212"
+                        android:padding="8dp"
+                        android:text="• 1.3.1 Gamma-Ray: Positron emission tomography (PET), radioisotope bone scans\n• 1.3.2 X-Ray: Chest radiography, fluoroscopy, CT computed tomography\n• 1.3.3 Ultraviolet: Fluorescence microscopy, DNA nucleotide binding\n• 1.3.4 Visible &amp; IR: Light microscopy histopathology, medical thermography\n• 1.3.5 Microwave: Radar cross-section backscatter, SAR planetary imaging\n• 1.3.6 Radio: Magnetic resonance imaging (MRI) 2D Fourier RF echoes\n• 1.3.7 Other: Acoustic ultrasound (Rayleigh speckle), Electron microscopy (TEM/SEM)"
+                        android:textColor="#E0E0E0"
+                        android:textSize="11sp"
+                        android:typeface="monospace" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:text="Pedagogical Context:\nSection 1.4 defines the fundamental steps: Acquisition → Enhancement → Restoration → Wavelets/Multiresolution → Compression → Morphological Processing → Segmentation → Feature Representation → Recognition. MediScan embeds these authentic DSP pipelines directly into an educational interactive workstation."
+                        android:textColor="@color/text_secondary"
+                        android:textSize="11sp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- CHAPTER 2: DIGITAL IMAGE FUNDAMENTALS -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                app:cardBackgroundColor="@color/surface_dark"
+                app:cardCornerRadius="10dp"
+                app:strokeColor="#333333"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="CHAPTER 2: DIGITAL IMAGE FUNDAMENTALS"
+                        android:textColor="@color/teal_medical"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:background="#121212"
+                        android:padding="8dp"
+                        android:text="• Visual Perception (2.1): Mach Bands lateral inhibition &amp; Simultaneous Contrast\n• Continuous Model (2.3): f(x,y) = i(x,y) · r(x,y) [Illumination 0&lt;i&lt;∞, Reflectance 0&lt;r&lt;1]\n• Sampling &amp; Quantization (2.4): N×M spatial grid, L = 2^k intensity levels (1..8 bits)\n• False Contouring (2.4.2): Ridges formed when intensity levels k &lt; 8\n• Bit-Plane Slicing (2.6.2): Bit 7 holds ~50% visual energy; bit 0 carries noise\n• Distance Metrics (2.5.2): De=√((x-s)²+(y-t)²), D4=|x-s|+|y-t|, D8=max(|x-s|,|y-t|)\n• Digital Subtraction Angiography (2.6.3): g(x,y) = c · (f(x,y) - h_mask(x,y))"
+                        android:textColor="#E0E0E0"
+                        android:textSize="11sp"
+                        android:typeface="monospace" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:text="Clinical Significance:\nUnderstanding human visual brightness discrimination and sampling bounds prevents diagnostic error from aliasing artifacts, checkerboard pixellation, or false contouring in low-dose radiologic digitization."
+                        android:textColor="@color/text_secondary"
+                        android:textSize="11sp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
             <!-- MODULE 1 -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
@@ -290,6 +380,96 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
                         android:text="Clinical Application: Eliminates spurious parasitic noise bridges between adjacent blood vessels in angiography; extracts sharp myocardial contour loops for ventricular volume calculation."
+                        android:textColor="@color/text_secondary"
+                        android:textSize="11sp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- CHAPTER 5: IMAGE RESTORATION AND NOISE -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                app:cardBackgroundColor="@color/surface_dark"
+                app:cardCornerRadius="10dp"
+                app:strokeColor="#333333"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="CHAPTER 5: IMAGE RESTORATION &amp; RECONSTRUCTION"
+                        android:textColor="@color/teal_medical"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:background="#121212"
+                        android:padding="8dp"
+                        android:text="• Degradation Model: g(x,y) = h(x,y) ★ f(x,y) + η(x,y)\n• Impulse (Salt &amp; Pepper): P(z=a)=Pa, P(z=b)=Pb\n• Gaussian Noise: p(z) = 1/(√(2π)σ) · e^(-(z-z̄)²/(2σ²))\n• Geometric Mean: f̂(x,y) = [ ∏ g(s,t) ]^(1/mn) [smooths without losing sharpness]\n• Harmonic Mean: f̂(x,y) = mn / ∑ [1 / g(s,t)] [good for salt noise]\n• Contraharmonic: f̂(x,y) = ∑ g^(Q+1) / ∑ g^Q [Q&gt;0: pepper, Q&lt;0: salt]\n• Alpha-Trimmed Mean: Drops d/2 lowest and d/2 highest values\n• Adaptive Wiener Filter: f̂ = μ + ((σ² - σ_η²)/σ²) · (g - μ)"
+                        android:textColor="#E0E0E0"
+                        android:textSize="11sp"
+                        android:typeface="monospace" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:text="Clinical Application: Removes detector thermal agitation in low-dose CT, reduces acoustic speckle in B-mode ultrasound, and suppresses salt-and-pepper artifacts in faulty telemetry transmissions."
+                        android:textColor="@color/text_secondary"
+                        android:textSize="11sp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- CHAPTER 6: COLOR IMAGE PROCESSING -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                app:cardBackgroundColor="@color/surface_dark"
+                app:cardCornerRadius="10dp"
+                app:strokeColor="#333333"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="CHAPTER 6: COLOR IMAGE PROCESSING &amp; PSEUDOCOLOR"
+                        android:textColor="@color/teal_medical"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:background="#121212"
+                        android:padding="8dp"
+                        android:text="• HSI Model (6.2.3): Hue (dominant wavelength), Saturation (purity), Intensity (achromatic brightness)\n• Decoupling: I = (R+G+B)/3; allows contrast enhancement without chromatic distortion\n• Intensity Slicing (6.3.1): Maps gray intervals to diagnostic color planes (isophotes)\n• Gray-Level to Color (6.3.2): Continuous transfer functions fR(r), fG(r), fB(r)\n  - Medical Thermal: Black → Red → Orange → White (vascular/inflammation mapping)\n  - PET Hot Metal: Low uptake (violet) to hypermetabolic neoplasm (hot white/yellow)"
+                        android:textColor="#E0E0E0"
+                        android:textSize="11sp"
+                        android:typeface="monospace" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:text="Clinical Application: The human eye can discern thousands of color shades vs. only dozens of gray levels. Pseudocolor maps dramatically enhance lesion detection in nuclear scintigraphy, functional MRI, and thermography."
                         android:textColor="@color/text_secondary"
                         android:textSize="11sp" />
                 </LinearLayout>

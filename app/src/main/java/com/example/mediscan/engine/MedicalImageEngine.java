@@ -38,6 +38,8 @@ public class MedicalImageEngine {
         MEDIAN_FILTER,
         SOBEL_GRADIENTS,
         LAPLACIAN_SHARPEN,
+        SPATIAL_CORRELATION,
+        SPATIAL_CONVOLUTION,
         FFT_SPECTRUM,
         FFT_IDEAL_LOWPASS,
         FFT_GAUSSIAN_LOWPASS,
@@ -91,6 +93,7 @@ public class MedicalImageEngine {
         public float logFactor = 1.0f;
         public int gaussianKernelSize = 3;
         public float laplacianStrength = 0.8f;
+        public int spatialKernelType = 0; // 0: Asymmetric (Fig 3.32), 1: Diagonal Gradient, 2: Sharpening, 3: Gaussian, 4: Horizontal Edge
         public double fftCutoffD0 = 36.0;
         public int globalThreshold = 128;
         public int adaptiveRadius = 9;
@@ -393,6 +396,18 @@ public class MedicalImageEngine {
             case LAPLACIAN_SHARPEN:
                 SpatialProcessor.applyLaplacianSharpening(input, output, width, height, parameters.laplacianStrength);
                 break;
+
+            case SPATIAL_CORRELATION: {
+                float[][] kernel = SpatialProcessor.getPredefinedKernel(parameters.spatialKernelType);
+                SpatialProcessor.applySpatialCorrelation(input, output, width, height, kernel);
+                break;
+            }
+
+            case SPATIAL_CONVOLUTION: {
+                float[][] kernel = SpatialProcessor.getPredefinedKernel(parameters.spatialKernelType);
+                SpatialProcessor.applySpatialConvolution(input, output, width, height, kernel);
+                break;
+            }
 
             case FFT_SPECTRUM: {
                 int fftSize = FrequencyProcessor.getValidFftDimension(Math.min(width, height), 256);

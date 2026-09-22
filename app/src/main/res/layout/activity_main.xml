@@ -103,6 +103,94 @@
             </LinearLayout>
         </com.google.android.material.appbar.MaterialToolbar>
 
+        <!-- Version 2.0 Pedagogical & Interactive Action Bar -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#121820"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="12dp"
+            android:paddingTop="6dp"
+            android:paddingEnd="12dp"
+            android:paddingBottom="6dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_chip_selected"
+                android:paddingStart="6dp"
+                android:paddingTop="2dp"
+                android:paddingEnd="6dp"
+                android:paddingBottom="2dp"
+                android:text="v2.0"
+                android:textColor="@color/bg_dark"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="6dp"
+                android:layout_height="1dp" />
+
+            <!-- 3D Intensity Topography Slicer Action Button -->
+            <Button
+                android:id="@+id/btn_action_3d_slicer"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_marginEnd="6dp"
+                android:backgroundTint="@color/surface_dark"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:text="3D Slicer"
+                android:textColor="@color/amber_caution"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                app:icon="@drawable/ic_theory"
+                app:iconSize="14dp"
+                app:iconTint="@color/amber_caution" />
+
+            <!-- When to Use Diagnostic Decision Matrix -->
+            <Button
+                android:id="@+id/btn_action_decision_guide"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_marginEnd="6dp"
+                android:backgroundTint="@color/surface_dark"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:text="When to Use"
+                android:textColor="@color/teal_medical"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                app:icon="@drawable/ic_sample_scans"
+                app:iconSize="14dp"
+                app:iconTint="@color/teal_medical" />
+
+            <!-- Walkthrough Tour -->
+            <Button
+                android:id="@+id/btn_action_walkthrough"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:backgroundTint="@color/surface_dark"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:text="Tour"
+                android:textColor="@color/text_primary"
+                android:textSize="11sp"
+                app:icon="@drawable/ic_camera"
+                app:iconSize="14dp"
+                app:iconTint="@color/text_primary" />
+        </LinearLayout>
+
         <!-- Main Scrollable Content -->
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
@@ -374,6 +462,90 @@
                             </com.google.android.material.button.MaterialButtonToggleGroup>
                         </LinearLayout>
 
+                        <!-- Spatial Kernel Selector for Correlation & Convolution -->
+                        <LinearLayout
+                            android:id="@+id/layout_spatial_kernel"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:visibility="gone">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="6dp"
+                                android:text="Kernel:"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="11sp" />
+
+                            <HorizontalScrollView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:overScrollMode="never"
+                                android:scrollbars="none">
+
+                                <com.google.android.material.button.MaterialButtonToggleGroup
+                                    android:id="@+id/toggle_spatial_kernel"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="36dp"
+                                    app:singleSelection="true">
+
+                                    <Button
+                                        android:id="@+id/btn_kernel_asym"
+                                        style="@style/Widget.Material3.Button.OutlinedButton"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="36dp"
+                                        android:insetTop="0dp"
+                                        android:insetBottom="0dp"
+                                        android:text="Asymmetric Wedge (Fig 3.32)"
+                                        android:textSize="10sp" />
+
+                                    <Button
+                                        android:id="@+id/btn_kernel_gradient"
+                                        style="@style/Widget.Material3.Button.OutlinedButton"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="36dp"
+                                        android:insetTop="0dp"
+                                        android:insetBottom="0dp"
+                                        android:text="Diagonal Gradient"
+                                        android:textSize="10sp" />
+
+                                    <Button
+                                        android:id="@+id/btn_kernel_sharpen"
+                                        style="@style/Widget.Material3.Button.OutlinedButton"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="36dp"
+                                        android:insetTop="0dp"
+                                        android:insetBottom="0dp"
+                                        android:text="High-Pass Sharpen"
+                                        android:textSize="10sp" />
+
+                                    <Button
+                                        android:id="@+id/btn_kernel_gaussian"
+                                        style="@style/Widget.Material3.Button.OutlinedButton"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="36dp"
+                                        android:insetTop="0dp"
+                                        android:insetBottom="0dp"
+                                        android:text="Gaussian 3x3"
+                                        android:textSize="10sp" />
+
+                                    <Button
+                                        android:id="@+id/btn_kernel_edge"
+                                        style="@style/Widget.Material3.Button.OutlinedButton"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="36dp"
+                                        android:insetTop="0dp"
+                                        android:insetBottom="0dp"
+                                        android:text="Step Edge"
+                                        android:textSize="10sp" />
+                                </com.google.android.material.button.MaterialButtonToggleGroup>
+                            </HorizontalScrollView>
+                        </LinearLayout>
+
                         <TextView
                             android:id="@+id/tv_param_hint"
                             android:layout_width="match_parent"
@@ -616,6 +788,24 @@
                             android:layout_height="36dp"
                             android:layout_marginEnd="6dp"
                             android:text="Laplacian Sharpening"
+                            android:textSize="11sp" />
+
+                        <Button
+                            android:id="@+id/btn_algo_correlation"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="6dp"
+                            android:text="Spatial Correlation (w ★ f)"
+                            android:textSize="11sp" />
+
+                        <Button
+                            android:id="@+id/btn_algo_convolution"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="6dp"
+                            android:text="Spatial Convolution (w * f)"
                             android:textSize="11sp" />
                     </LinearLayout>
                 </HorizontalScrollView>

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_dark"
+    android:orientation="vertical">
+
+    <!-- Header Toolbar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/card_dark"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="12dp">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Diagnostic Decision Matrix"
+                    android:textColor="@color/teal_medical"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/bg_chip_selected"
+                    android:paddingStart="6dp"
+                    android:paddingTop="2dp"
+                    android:paddingEnd="6dp"
+                    android:paddingBottom="2dp"
+                    android:text="WHEN TO USE"
+                    android:textColor="@color/bg_dark"
+                    android:textSize="10sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Clinical Imaging Problems → Exact DIP Mathematical Solutions"
+                android:textColor="@color/text_secondary"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/btn_close_guide"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Close Diagnostic Guide"
+            android:src="@drawable/ic_close"
+            app:tint="@color/text_primary" />
+    </LinearLayout>
+
+    <!-- Scrollable Problem Catalog -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="12dp">
+
+        <LinearLayout
+            android:id="@+id/layout_decision_cards"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Card 1: Low Contrast / Underexposed Shadows -->
+            <include
+                android:id="@+id/card_gamma"
+                layout="@layout/item_decision_card" />
+
+            <!-- Card 2: Extreme Dynamic Range -->
+            <include
+                android:id="@+id/card_log"
+                layout="@layout/item_decision_card" />
+
+            <!-- Card 3: Salt & Pepper / Speckle Noise -->
+            <include
+                android:id="@+id/card_median"
+                layout="@layout/item_decision_card" />
+
+            <!-- Card 4: Sensor Thermal Additive Gaussian Noise -->
+            <include
+                android:id="@+id/card_wiener"
+                layout="@layout/item_decision_card" />
+
+            <!-- Card 5: Isolate Blood Vessels from Bone Clutter -->
+            <include
+                android:id="@+id/card_dsa"
+                layout="@layout/item_decision_card" />
+
+            <!-- Card 6: Periodic Interference Lines / Moire Patterns -->
+            <include
+                android:id="@+id/card_fft"
+                layout="@layout/item_decision_card" />
+
+            <!-- Card 7: Subtle Lesion & Tumor Boundary Delineation -->
+            <include
+                android:id="@+id/card_sobel"
+                layout="@layout/item_decision_card" />
+
+            <!-- Card 8: Automated Cell Counting & Biopsy Segmentation -->
+            <include
+                android:id="@+id/card_otsu"
+                layout="@layout/item_decision_card" />
+
+            <!-- Card 9: Radiologist Visual Eye Fatigue & Subtle Density Shifts -->
+            <include
+                android:id="@+id/card_pseudocolor"
+                layout="@layout/item_decision_card" />
+
+            <!-- Card 10: Spatial Correlation vs Convolution (Kernel Orientation) -->
+            <include
+                android:id="@+id/card_correlation"
+                layout="@layout/item_decision_card" />
+
+            <!-- Card 11: Salt Noise Only (Transmitter Dead Pixels) -->
+            <include
+                android:id="@+id/card_harmonic"
+                layout="@layout/item_decision_card" />
+
+            <!-- Card 12: Pepper Noise Only (Sensor Dark Dropouts) -->
+            <include
+                android:id="@+id/card_contraharmonic"
+                layout="@layout/item_decision_card" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</LinearLayout>

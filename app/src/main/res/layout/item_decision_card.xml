@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    app:cardBackgroundColor="@color/card_dark"
+    app:cardCornerRadius="10dp"
+    app:cardElevation="2dp"
+    app:strokeColor="#3300E5FF"
+    app:strokeWidth="1dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="14dp">
+
+        <!-- Top Row: Category Chip & Reference -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_card_modality"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_chip_normal"
+                android:paddingStart="8dp"
+                android:paddingTop="2dp"
+                android:paddingEnd="8dp"
+                android:paddingBottom="2dp"
+                android:text="CHEST X-RAY / CT"
+                android:textColor="@color/teal_medical"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/tv_card_reference"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Gonzalez &amp; Woods 3.2.2"
+                android:textColor="@color/text_secondary"
+                android:textSize="10sp" />
+        </LinearLayout>
+
+        <!-- Problem Statement -->
+        <TextView
+            android:id="@+id/tv_card_problem_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Problem: Low Contrast in Shadows / Underexposure"
+            android:textColor="@color/text_primary"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_card_problem_desc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:lineSpacingMultiplier="1.2"
+            android:text="Image is excessively dark or has narrow dynamic range, causing pulmonary infiltrates or soft tissue structures to blend into shadows."
+            android:textColor="@color/text_secondary"
+            android:textSize="12sp" />
+
+        <!-- Solution Box -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="#1500E5FF"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+            <TextView
+                android:id="@+id/tv_card_solution_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="✓ Recommended: Power-Law (Gamma γ &lt; 1) or Histogram Equalization"
+                android:textColor="@color/teal_medical"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_card_solution_formula"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="Formula: s = c · r^γ (γ = 0.5 expands dark values; CDF equalizes p(r_k))"
+                android:textColor="@color/text_primary"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <!-- Action Button -->
+        <Button
+            android:id="@+id/btn_card_apply"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="match_parent"
+            android:layout_height="38dp"
+            android:layout_marginTop="10dp"
+            android:backgroundTint="@color/surface_dark"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:text="Apply Solution to Scan"
+            android:textColor="@color/teal_medical"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            app:icon="@drawable/ic_sample_scans"
+            app:iconSize="14dp"
+            app:iconTint="@color/teal_medical" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

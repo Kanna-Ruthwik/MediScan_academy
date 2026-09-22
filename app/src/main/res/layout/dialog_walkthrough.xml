@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_card_rounded"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <!-- Header: Step Counter & Close -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_walkthrough_step_badge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_chip_selected"
+            android:paddingStart="8dp"
+            android:paddingTop="3dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="3dp"
+            android:text="STEP 1 OF 5"
+            android:textColor="@color/bg_dark"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <ImageButton
+            android:id="@+id/btn_walkthrough_close"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Close Walkthrough"
+            android:src="@drawable/ic_close"
+            app:tint="@color/text_secondary" />
+    </LinearLayout>
+
+    <!-- Visual Icon Container -->
+    <FrameLayout
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/bg_chip_normal">
+
+        <ImageView
+            android:id="@+id/iv_walkthrough_icon"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_gravity="center"
+            android:contentDescription="Step Icon"
+            android:src="@drawable/ic_theory"
+            app:tint="@color/teal_medical" />
+    </FrameLayout>
+
+    <!-- Step Title -->
+    <TextView
+        android:id="@+id/tv_walkthrough_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:text="Welcome to MediScan Academy v2.0"
+        android:textColor="@color/text_primary"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <!-- Step Subtitle / Reference -->
+    <TextView
+        android:id="@+id/tv_walkthrough_subtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:gravity="center"
+        android:text="Native DSP Clinical &amp; Pedagogical Workstation"
+        android:textColor="@color/teal_medical"
+        android:textSize="12sp" />
+
+    <!-- Step Description Body -->
+    <TextView
+        android:id="@+id/tv_walkthrough_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:lineSpacingMultiplier="1.25"
+        android:text="MediScan Academy brings the landmark textbook Digital Image Processing (Gonzalez &amp; Woods) to life. Every algorithm is executed in real time on raw memory buffers in pure mathematical Java."
+        android:textColor="@color/text_secondary"
+        android:textSize="13sp" />
+
+    <!-- Highlight Callout Box -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:background="@drawable/bg_chip_normal"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/tv_walkthrough_callout_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="💡 Pro Tip:"
+            android:textColor="@color/amber_caution"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_walkthrough_callout_body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="Use the parameter slider directly underneath the viewport to interactively tune cutoffs, exponents, and window sizes."
+            android:textColor="@color/text_primary"
+            android:textSize="11sp" />
+    </LinearLayout>
+
+    <!-- Progress Dots Indicator -->
+    <LinearLayout
+        android:id="@+id/layout_dots"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="18dp"
+        android:orientation="horizontal">
+
+        <View
+            android:id="@+id/dot_0"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:layout_margin="3dp"
+            android:background="@drawable/bg_chip_selected" />
+
+        <View
+            android:id="@+id/dot_1"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:layout_margin="3dp"
+            android:background="@drawable/bg_chip_normal" />
+
+        <View
+            android:id="@+id/dot_2"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:layout_margin="3dp"
+            android:background="@drawable/bg_chip_normal" />
+
+        <View
+            android:id="@+id/dot_3"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:layout_margin="3dp"
+            android:background="@drawable/bg_chip_normal" />
+
+        <View
+            android:id="@+id/dot_4"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:layout_margin="3dp"
+            android:background="@drawable/bg_chip_normal" />
+    </LinearLayout>
+
+    <!-- Navigation Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_walkthrough_prev"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:text="Previous"
+            android:textSize="12sp"
+            android:visibility="invisible" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/btn_walkthrough_next"
+            style="@style/Widget.Material3.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:backgroundTint="@color/teal_medical"
+            android:text="Next"
+            android:textColor="@color/bg_dark"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+</LinearLayout>

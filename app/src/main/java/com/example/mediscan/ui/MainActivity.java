@@ -74,6 +74,13 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton btnOpenGallery;
     private ImageButton btnTheoryInfo;
 
+    // Version 2.0 Feature Action Bar & Controls
+    private Button btnAction3dSlicer;
+    private Button btnActionDecisionGuide;
+    private Button btnActionWalkthrough;
+    private LinearLayout layoutSpatialKernel;
+    private MaterialButtonToggleGroup toggleSpatialKernel;
+
     // Parameters UI
     private TextView tvParamLabel;
     private TextView tvParamValue;
@@ -84,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
 
     // State
     private Bitmap currentStaticBitmap;
+    private Bitmap lastProcessedBitmap;
     private int currentSampleIndex = 1;
     private final String[] sampleNames = {
             "1.3.1 Gamma-Ray (PET Scan)",
@@ -131,6 +139,12 @@ public class MainActivity extends AppCompatActivity {
         btnSampleScans = findViewById(R.id.btn_sample_scans);
         btnOpenGallery = findViewById(R.id.btn_open_gallery);
         btnTheoryInfo = findViewById(R.id.btn_theory_info);
+
+        btnAction3dSlicer = findViewById(R.id.btn_action_3d_slicer);
+        btnActionDecisionGuide = findViewById(R.id.btn_action_decision_guide);
+        btnActionWalkthrough = findViewById(R.id.btn_action_walkthrough);
+        layoutSpatialKernel = findViewById(R.id.layout_spatial_kernel);
+        toggleSpatialKernel = findViewById(R.id.toggle_spatial_kernel);
 
         tvParamLabel = findViewById(R.id.tv_param_label);
         tvParamValue = findViewById(R.id.tv_param_value);
@@ -189,6 +203,24 @@ public class MainActivity extends AppCompatActivity {
             sheet.show(getSupportFragmentManager(), TheoryBottomSheetFragment.TAG);
         });
 
+        // Version 2.0 Feature Action Buttons
+        if (btnAction3dSlicer != null) {
+            btnAction3dSlicer.setOnClickListener(v -> open3dIntensitySlicer());
+        }
+        if (btnActionDecisionGuide != null) {
+            btnActionDecisionGuide.setOnClickListener(v -> openDiagnosticGuide());
+        }
+        if (btnActionWalkthrough != null) {
+            btnActionWalkthrough.setOnClickListener(v -> openWalkthroughTour());
+        }
+
+        // Auto-show walkthrough on initial launch of Version 2.0
+        android.content.SharedPreferences prefs = getSharedPreferences("mediscan_prefs", MODE_PRIVATE);
+        if (!prefs.getBoolean("has_seen_v2_walkthrough", false)) {
+            prefs.edit().putBoolean("has_seen_v2_walkthrough", true).apply();
+            openWalkthroughTour();
+        }
+
         // Chapter 2: Digital Image Fundamentals bindings
         bindAlgorithmButton(R.id.btn_algo_quantize, MedicalImageEngine.Algorithm.BIT_DEPTH_QUANTIZATION, "Bit-Depth Quantization");
         bindAlgorithmButton(R.id.btn_algo_subsampling, MedicalImageEngine.Algorithm.SPATIAL_SUBSAMPLING, "Spatial Subsampling");
@@ -210,6 +242,8 @@ public class MainActivity extends AppCompatActivity {
         bindAlgorithmButton(R.id.btn_algo_median, MedicalImageEngine.Algorithm.MEDIAN_FILTER, "Median Filter (Speckle)");
         bindAlgorithmButton(R.id.btn_algo_sobel, MedicalImageEngine.Algorithm.SOBEL_GRADIENTS, "Sobel Edge Gradients");
         bindAlgorithmButton(R.id.btn_algo_laplacian, MedicalImageEngine.Algorithm.LAPLACIAN_SHARPEN, "Laplacian Sharpening");
+        bindAlgorithmButton(R.id.btn_algo_correlation, MedicalImageEngine.Algorithm.SPATIAL_CORRELATION, "Spatial Correlation (w ★ f)");
+        bindAlgorithmButton(R.id.btn_algo_convolution, MedicalImageEngine.Algorithm.SPATIAL_CONVOLUTION, "Spatial Convolution (w * f)");
 
         bindAlgorithmButton(R.id.btn_algo_fft_spectrum, MedicalImageEngine.Algorithm.FFT_SPECTRUM, "2D FFT Magnitude Spectrum");
         bindAlgorithmButton(R.id.btn_algo_ilpf, MedicalImageEngine.Algorithm.FFT_IDEAL_LOWPASS, "Ideal Lowpass (ILPF)");
@@ -283,6 +317,28 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
+
+        // Spatial kernel selector for Correlation & Convolution
+        if (toggleSpatialKernel != null) {
+            toggleSpatialKernel.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
+                if (isChecked) {
+                    if (checkedId == R.id.btn_kernel_asym) {
+                        imageEngine.getParameters().spatialKernelType = 0;
+                    } else if (checkedId == R.id.btn_kernel_gradient) {
+                        imageEngine.getParameters().spatialKernelType = 1;
+                    } else if (checkedId == R.id.btn_kernel_sharpen) {
+                        imageEngine.getParameters().spatialKernelType = 2;
+                    } else if (checkedId == R.id.btn_kernel_gaussian) {
+                        imageEngine.getParameters().spatialKernelType = 3;
+                    } else if (checkedId == R.id.btn_kernel_edge) {
+                        imageEngine.getParameters().spatialKernelType = 4;
+                    }
+                    if (currentInputMode == InputMode.STATIC_SCAN) {
+                        reprocessStaticScan();
+                    }
+                }
+            });
+        }
     }
 
     private void bindAlgorithmButton(int viewId, MedicalImageEngine.Algorithm algorithm, String displayName) {
@@ -305,8 +361,25 @@ public class MainActivity extends AppCompatActivity {
 
     private void configureParameterControls(MedicalImageEngine.Algorithm algorithm) {
         layoutStructuringElement.setVisibility(View.GONE);
+        if (layoutSpatialKernel != null) {
+            layoutSpatialKernel.setVisibility(View.GONE);
+        }
 
         switch (algorithm) {
+            case SPATIAL_CORRELATION:
+                if (layoutSpatialKernel != null) layoutSpatialKernel.setVisibility(View.VISIBLE);
+                tvParamLabel.setText("Spatial Correlation w(x,y) ★ f(x,y):");
+                tvParamValue.setText("Predefined Kernel");
+                tvParamHint.setText("Gonzalez & Woods 3.4.1: Slides unrotated kernel w(s,t) directly across f(x,y). Use 'Asymmetric Wedge' to contrast with Convolution!");
+                break;
+
+            case SPATIAL_CONVOLUTION:
+                if (layoutSpatialKernel != null) layoutSpatialKernel.setVisibility(View.VISIBLE);
+                tvParamLabel.setText("Spatial Convolution w(x,y) ∗ f(x,y):");
+                tvParamValue.setText("Rotated 180° Kernel");
+                tvParamHint.setText("Gonzalez & Woods 3.4.1: Rotates kernel 180° w(-s,-t) before sliding. Notice opposite directional weighting vs Correlation!");
+                break;
+
             case BIT_DEPTH_QUANTIZATION:
                 tvParamLabel.setText("Quantization Bit Depth (k):");
                 seekbarParam.setMax(7); // 1 to 7 bits
@@ -744,6 +817,7 @@ public class MainActivity extends AppCompatActivity {
                     height,
                     rotationDegrees,
                     (processedBmp, histogram, stats, latencyMs, fps) -> {
+                        lastProcessedBitmap = processedBmp;
                         if (currentInputMode == InputMode.LIVE_CAMERA) {
                             imageViewport.setImageBitmap(processedBmp);
                             histogramView.updateHistogram(histogram, stats.otsuThreshold, stats.meanIntensity);
@@ -756,6 +830,51 @@ public class MainActivity extends AppCompatActivity {
             // CRITICAL: Always release hardware buffer
             imageProxy.close();
         }
+    }
+
+    private void open3dIntensitySlicer() {
+        Bitmap source = lastProcessedBitmap != null ? lastProcessedBitmap : currentStaticBitmap;
+        if (source == null) {
+            Toast.makeText(this, "No image buffer available for 3D reconstruction.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        int[] grayscale = ImageUtils.bitmapToGrayscaleIntArray(source);
+        Intensity3DDialog dialog = Intensity3DDialog.newInstance(grayscale, source.getWidth(), source.getHeight());
+        dialog.show(getSupportFragmentManager(), "intensity_3d");
+    }
+
+    private void openDiagnosticGuide() {
+        DiagnosticGuideDialog guide = DiagnosticGuideDialog.newInstance();
+        guide.setOnApplySolutionListener((algorithm, sampleScanIndex, customParam) -> {
+            switchToStaticMode();
+            loadSampleScan(sampleScanIndex);
+            selectAlgorithm(algorithm, algorithm.name());
+
+            if (customParam > 0.001f) {
+                applyGuideCustomParam(algorithm, customParam);
+            }
+        });
+        guide.show(getSupportFragmentManager(), "diagnostic_guide");
+    }
+
+    private void applyGuideCustomParam(MedicalImageEngine.Algorithm algo, float param) {
+        MedicalImageEngine.Parameters p = imageEngine.getParameters();
+        if (algo == MedicalImageEngine.Algorithm.GAMMA_CORRECTION) {
+            p.gamma = param;
+            seekbarParam.setProgress((int) (param * 100));
+        } else if (algo == MedicalImageEngine.Algorithm.RESTORE_ADAPTIVE_WIENER) {
+            p.wienerNoiseVariance = param;
+            seekbarParam.setProgress((int) param);
+        } else if (algo == MedicalImageEngine.Algorithm.RESTORE_CONTRAHARMONIC_MEAN) {
+            p.contraharmonicQ = param;
+            seekbarParam.setProgress((int) ((param + 3.0f) * 10));
+        }
+        reprocessStaticScan();
+    }
+
+    private void openWalkthroughTour() {
+        WalkthroughDialog tour = WalkthroughDialog.newInstance();
+        tour.show(getSupportFragmentManager(), "walkthrough");
     }
 
     private void loadSampleScan(int index) {
@@ -821,6 +940,7 @@ public class MainActivity extends AppCompatActivity {
         pbProcessing.setVisibility(View.VISIBLE);
 
         imageEngine.dispatchStaticScan(currentStaticBitmap, (processedBmp, histogram, stats, latencyMs, fps) -> {
+            lastProcessedBitmap = processedBmp;
             pbProcessing.setVisibility(View.GONE);
             imageViewport.setImageBitmap(processedBmp);
             histogramView.updateHistogram(histogram, stats.otsuThreshold, stats.meanIntensity);

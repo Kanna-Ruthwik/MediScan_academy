@@ -104,8 +104,156 @@ public final class SpatialProcessor {
     }
 
     // =========================================================================
-    // MODULE 2: SPATIAL CONVOLUTION & FILTERING ENGINE (Ch. 3)
+    // MODULE 2: SPATIAL CONVOLUTION & CORRELATION ENGINE (Ch. 3, Sec. 3.4.1)
     // =========================================================================
+
+    /**
+     * Standard predefined spatial kernels for demonstrating Correlation vs Convolution.
+     * Reference: Gonzalez & Woods (4th Ed.), Section 3.4.1 & Figure 3.32.
+     */
+    public static final String[] KERNEL_NAMES = {
+            "Asymmetric L-Wedge (Fig 3.32)",
+            "Diagonal Gradient (Prewitt)",
+            "High-Pass Sharpening",
+            "Gaussian 3x3 Smoothing",
+            "Horizontal Step Edge"
+    };
+
+    public static float[][] getPredefinedKernel(int kernelType) {
+        switch (kernelType) {
+            case 0:
+                // Textbook Asymmetric L-Wedge Kernel (Gonzalez & Woods Fig 3.32)
+                // Clearly shows 180° rotation between correlation and convolution
+                return new float[][]{
+                        {0.00f, 0.00f, 0.00f},
+                        {0.00f, 1.00f, 0.50f},
+                        {0.00f, 0.25f, 0.125f}
+                };
+            case 1:
+                // Directional Diagonal Gradient
+                return new float[][]{
+                        {-1.0f, -1.0f,  0.0f},
+                        {-1.0f,  0.0f,  1.0f},
+                        { 0.0f,  1.0f,  1.0f}
+                };
+            case 2:
+                // 3x3 Laplacian High-Pass Sharpening
+                return new float[][]{
+                        { 0.0f, -1.0f,  0.0f},
+                        {-1.0f,  5.0f, -1.0f},
+                        { 0.0f, -1.0f,  0.0f}
+                };
+            case 3:
+                // 3x3 Gaussian Smoothing
+                return new float[][]{
+                        {1f / 16f, 2f / 16f, 1f / 16f},
+                        {2f / 16f, 4f / 16f, 2f / 16f},
+                        {1f / 16f, 2f / 16f, 1f / 16f}
+                };
+            case 4:
+                // Horizontal Step Edge
+                return new float[][]{
+                        {-1.0f, -1.0f, -1.0f},
+                        { 0.0f,  0.0f,  0.0f},
+                        { 1.0f,  1.0f,  1.0f}
+                };
+            default:
+                return getPredefinedKernel(0);
+        }
+    }
+
+    /**
+     * 2D Spatial Correlation:
+     * w(x, y) ★ f(x, y) = sum_{s=-a}^a sum_{t=-b}^b w(s, t) * f(x + s, y + t)
+     * Slides kernel directly across image WITHOUT flipping.
+     */
+    public static void applySpatialCorrelation(
+            int[] input,
+            int[] output,
+            int width,
+            int height,
+            float[][] kernel) {
+
+        int kHeight = kernel.length;
+        int kWidth = kernel[0].length;
+        int radiusY = kHeight / 2;
+        int radiusX = kWidth / 2;
+
+        for (int y = 0; y < height; y++) {
+            int rowOffset = y * width;
+            for (int x = 0; x < width; x++) {
+                float sum = 0.0f;
+
+                for (int ky = 0; ky < kHeight; ky++) {
+                    int sampleY = y + (ky - radiusY);
+                    if (sampleY < 0 || sampleY >= height) continue;
+                    int sampleRow = sampleY * width;
+                    float[] kRow = kernel[ky];
+
+                    for (int kx = 0; kx < kWidth; kx++) {
+                        int sampleX = x + (kx - radiusX);
+                        if (sampleX < 0 || sampleX >= width) continue;
+
+                        sum += input[sampleRow + sampleX] * kRow[kx];
+                    }
+                }
+
+                int result = Math.round(sum);
+                output[rowOffset + x] = Math.max(0, Math.min(255, result));
+            }
+        }
+    }
+
+    /**
+     * 2D Spatial Convolution:
+     * w(x, y) ∗ f(x, y) = sum_{s=-a}^a sum_{t=-b}^b w(s, t) * f(x - s, y - t)
+     *                   = sum_{s=-a}^a sum_{t=-b}^b w(-s, -t) * f(x + s, y + t)
+     * Mathematically equivalent to rotating the kernel by 180° and then performing correlation.
+     */
+    public static void applySpatialConvolution(
+            int[] input,
+            int[] output,
+            int width,
+            int height,
+            float[][] kernel) {
+
+        int kHeight = kernel.length;
+        int kWidth = kernel[0].length;
+        int radiusY = kHeight / 2;
+        int radiusX = kWidth / 2;
+
+        // Rotate kernel 180 degrees (flip horizontally and vertically)
+        float[][] rotatedKernel = new float[kHeight][kWidth];
+        for (int r = 0; r < kHeight; r++) {
+            for (int c = 0; c < kWidth; c++) {
+                rotatedKernel[r][c] = kernel[kHeight - 1 - r][kWidth - 1 - c];
+            }
+        }
+
+        for (int y = 0; y < height; y++) {
+            int rowOffset = y * width;
+            for (int x = 0; x < width; x++) {
+                float sum = 0.0f;
+
+                for (int ky = 0; ky < kHeight; ky++) {
+                    int sampleY = y + (ky - radiusY);
+                    if (sampleY < 0 || sampleY >= height) continue;
+                    int sampleRow = sampleY * width;
+                    float[] kRow = rotatedKernel[ky];
+
+                    for (int kx = 0; kx < kWidth; kx++) {
+                        int sampleX = x + (kx - radiusX);
+                        if (sampleX < 0 || sampleX >= width) continue;
+
+                        sum += input[sampleRow + sampleX] * kRow[kx];
+                    }
+                }
+
+                int result = Math.round(sum);
+                output[rowOffset + x] = Math.max(0, Math.min(255, result));
+            }
+        }
+    }
 
     /**
      * Discrete 2D Spatial Convolution with zero-padding border boundary handling:
